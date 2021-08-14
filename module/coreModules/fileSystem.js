@@ -1,6 +1,7 @@
 //import module
 const fs = require('fs');
 const chalk=require('chalk')
+const validator=require("validator")
 const folderPath = './data';
 
 
@@ -43,6 +44,7 @@ const readSpesificFileData = (arg) =>{
     console.log(chalk.cyan.bold("Contact Detail : "))
     console.log("Nama Lengkap : ",readSpesific.nama)
     console.log("Nomor Telepon : ",readSpesific.nomorHP)
+    console.log("Alamat : ",readSpesific.alamat)
     if(readSpesific.email){
       console.log("Email : ",readSpesific.email)
     } 
@@ -69,18 +71,34 @@ const searchDuplikat= async (con,object,perintah) => {
     return duplikat;
   }
 }
+const validatorEmail =(object)=>{
+  var respoonn=true;
+  if(object.email){
+    if(!validator.isEmail(object.email)){
+      respoonn=false;
+    }else { respoonn=true; }
+  }else{
+    respoonn=true;
+  }
+  return respoonn;
+}
 
 const saveContact = async(object) => {
   const readFile = fs.readFileSync('data/contacts.json','utf-8')
   const con = JSON.parse(readFile)
   var perintah= "create";
+  var validEmail=validatorEmail(object)
   var dup= await searchDuplikat(con,object,perintah)
-    if ( dup ) {
+  if ( dup ) {
     console.log(chalk.red.bold("Tidak Berhasil Tersimpan, Terdapat Data Duplikat."))
     } else {
-      con.push(object)
-      fs.writeFileSync('data/contacts.json',JSON.stringify(con))
-      console.log(chalk.green.bold("Data Anda berhasil di Simpan"))
+      if(validEmail){
+        con.push(object)
+        fs.writeFileSync('data/contacts.json',JSON.stringify(con))
+        console.log(chalk.green.bold("Data Anda berhasil di Simpan"))
+      }else{
+        console.log(chalk.red.bold("Tidak Berhasil Tersimpan, Email Tidak Valid."))
+      }
     }  
   rl.close()
 }
@@ -89,12 +107,17 @@ const updateSpesificFileData = async(object) => {
   const readFile = fs.readFileSync('data/contacts.json','utf-8')
   const con = JSON.parse(readFile)
   var perintah= "update";
+  var validEmail=validatorEmail(object)
   var dup= await searchDuplikat(con,object,perintah)
   
   if ( dup && dup.length>=1) {
-      dup.push(object)
-      fs.writeFileSync('data/contacts.json',JSON.stringify(dup))
-      console.log(chalk.green.bold("Data Anda berhasil di Update"))
+      if(validEmail){
+        dup.push(object)
+        fs.writeFileSync('data/contacts.json',JSON.stringify(dup))
+        console.log(chalk.green.bold("Data Anda berhasil di Update"))
+      }else{
+        console.log(chalk.red.bold("Tidak Berhasil TerUpdate, Email Tidak Valid"));
+      }
     } else {
       console.log(chalk.red.bold("Tidak Berhasil TerUpdate"));
     }  

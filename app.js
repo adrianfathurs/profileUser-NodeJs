@@ -95,15 +95,24 @@ yargs.command({
     nama:{
       describe:"Nama Lengkap",
       demandOption:true,
+      alias:"n",
       type:"string"
     },
     email:{
       describe:"Email",
       demandOption:false,
+      alias:"e",
       type:"string"
     },
     nomorHP:{
       describe:"Nomor Telepon",
+      demandOption:true,
+      alias:"no",
+      type:"string"
+    },
+    alamat:{
+      describe:"Alamat",
+      alias:"al",
       demandOption:true,
       type:"string"
     },
@@ -112,7 +121,8 @@ yargs.command({
     const object={
       nama:argv.nama,
       email:argv.email,
-      nomorHP:argv.nomorHP
+      nomorHP:argv.nomorHP,
+      alamat:argv.alamat
     }
     fileSystem.saveContact(object);
   },
@@ -184,12 +194,19 @@ yargs.command({
       alias:"no",
       type:"string"
     },
+    alamat:{
+      describe:"Alamat",
+      demandOption:false,
+      alias:"al",
+      type:"string"
+    },
   },
   handler(argv){
     var object={
       nama:argv.nama,
       nomorHP:argv.nomorHP,
-      email:argv.email
+      email:argv.email,
+      alamat:argv.alamat
     }
     fileSystem.updateSpesificFileData(object);
   }
